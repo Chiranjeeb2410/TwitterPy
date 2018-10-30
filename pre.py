@@ -21,28 +21,20 @@ matplotlib.style.use('ggplot')
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
-
-
 tweets = pd.read_csv('tweets_all.csv', encoding = "ISO-8859-1")
-
 
 tweets['handles'] =  ''
 
-
-#remove handles
 for i in range(len(tweets['text'])):
     try:
         tweets['handles'][i] = tweets['text'].str.split(' ')[i][0]
-    except AttributeError:    
+    except AttributeError:
         tweets['handles'][i] = 'other'
 
-
-#Preprocessing handles. select handles contains 'RT @'
 for i in range(len(tweets['text'])):
     if tweets['handles'].str.contains('@')[i]  == False:
         tweets['handles'][i] = 'other'
-        
-# remove URLs, RTs, and twitter handles
+
 for i in range(len(tweets['text'])):
     tweets['text'][i] = " ".join([word for word in tweets['text'][i].split()
                                 if 'http' not in word and '@' not in word and '<' not in word])
@@ -50,7 +42,7 @@ for i in range(len(tweets['text'])):
 tweets['text'] = tweets['text'].apply(lambda x: re.sub('[!@#$:).;,?&]', '', x.lower()))
 tweets['text'] = tweets['text'].apply(lambda x: re.sub('  ', ' ', x))
 
-hi = tweets['text'][1]
-print (hi)
+test = tweets['text'][1]
+print (test)
 
 
