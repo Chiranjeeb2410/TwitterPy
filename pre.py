@@ -27,9 +27,12 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn import metrics
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
+#from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.metrics import accuracy_score
+#from sklearn.svm import SVC
+#from sklearn.metrics import roc_auc_score
+#from sklearn.metrics import confusion_matrix
+from sklearn.svm import LinearSVC
 
 matplotlib.style.use('ggplot')
 pd.options.mode.chained_assignment = None
@@ -97,14 +100,11 @@ X_train_tfidf = transformer.fit_transform(X_train_counts)
 x_test_counts = count_vect.transform(x_test)
 x_test_tfidf = transformer.transform(x_test_counts)
 
-#training vectorizer model
-model = RandomForestClassifier(n_estimators=200)
-model.fit(X_train_tfidf,y_train)
+#using/training linear SVM model
+model = LinearSVC()
+model.fit(X_train_tfidf, y_train)
 
 #testing model and accuracy
 predictions = model.predict(x_test_tfidf)
 print(predictions)
-print(accuracy_score(y_test,predictions))
-
-
-
+print(accuracy_score(y_test, predictions))
