@@ -1,10 +1,10 @@
 import csv
 
 #Variables that contains the user credentials to access Twitter API
-access_token = "1059659088630472705-NjDqXDizTfCcc6I0MWZvNQUOCWaT3D"
-access_token_secret = "ktqme1A9XFTgQqnvRjvE4qocyFtCRemySAYHtxZiQebP8"
-consumer_key = "oJQwawI8gkBXThXQrtnU7TJc7"
-consumer_secret = "O8SHXEyECumFOkedjoy65ANHqiXusHDgT5vUHfMBtdzlu3w0uc"
+access_token = "Enter access_token"
+access_token_secret = "Enter access secret"
+consumer_key = "Enter consumer key"
+consumer_secret = "Enter consumer secret"
 
 import twitter
 api = twitter.Api(
