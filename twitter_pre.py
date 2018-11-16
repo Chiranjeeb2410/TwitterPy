@@ -39,18 +39,18 @@ pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
 #adds Sentiment and text header labels
-for line in fileinput.input(files=['test_pre.csv'], inplace=True):
+for line in fileinput.input(files=['tweet_csv/test_pre.csv'], inplace=True):
     if fileinput.isfirstline():
         print ('SentimentText')
     print (line),
 
-tweets = pd.read_csv('test_pre.csv', encoding = "ISO-8859-1")
+tweets = pd.read_csv('tweet_csv/test_pre.csv', encoding = "ISO-8859-1")
 tweets['handles'] =  ''
 
 #remove handles
 for i in range(len(tweets['SentimentText'])):
     try:
-        tweets['handles'][i] = tweets['SentimentText'].str.split(' ')[i][0]
+        tweets['handles'][i] = tweets['SentimentText'].str.split(' ').iloc[i][0]
     except AttributeError:
         tweets['handles'][i] = 'other'
 #len(tweets['text'])
@@ -78,9 +78,10 @@ tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: " ".join(x for
 ps = PorterStemmer()
 tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: ' '.join([ps.stem(word) for word in x.split()]))
 
-#outputting text segments from tweets in pre_tweets.csv
-with open('test_pre.csv', "w") as outfile:
+#outputting text segments from tweets in test_pre.csv
+with open('tweet_csv/test_pre.csv', "w") as outfile:
     for entries in tweets['SentimentText']:
         outfile.write(entries)
         outfile.write("\n")
+
 

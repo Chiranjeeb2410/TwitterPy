@@ -2,7 +2,7 @@ from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 import pandas as pd
 
-df = pd.read_csv(r"test_pre.csv", encoding ="ISO-8859-1")
+df = pd.read_csv(r"tweet_csv/test_pre.csv", encoding ="ISO-8859-1")
 comments= ' '
 stopwords = set(STOPWORDS)
 

@@ -24,18 +24,19 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn import metrics
 from sklearn.pipeline import Pipeline
-#from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from collections import Counter
 from sklearn.metrics import accuracy_score
+#from sklearn.ensemble import RandomForestClassifier
 #from sklearn.svm import SVC
 #from sklearn.metrics import roc_auc_score
 #from sklearn.metrics import confusion_matrix
-from sklearn.svm import LinearSVC
 
 matplotlib.style.use('ggplot')
 pd.options.mode.chained_assignment = None
 warnings.filterwarnings("ignore")
 
-tweets = pd.read_csv('new.csv', encoding = "ISO-8859-1")
+tweets = pd.read_csv('tweet_csv/new1.csv', encoding = "ISO-8859-1")
 tweets['handles'] =  ''
 
 #remove handles
@@ -70,18 +71,18 @@ ps = PorterStemmer()
 tweets['SentimentText'] = tweets['SentimentText'].apply(lambda x: ' '.join([ps.stem(word) for word in x.split()]))
 
 #outputting text segments from tweets in pre_tweets.csv
-with open('pre_tweets.csv', "w") as outfile:
+with open('tweet_csv/pre_tweets.csv', "w") as outfile:
 	for entries in tweets['SentimentText']:
 		outfile.write(entries)
 		outfile.write("\n")
 
 #adds sentiment values corresponding to each tweet text
-with open('pre_tweets.csv', "w") as outfile:
+with open('tweet_csv/pre_tweets.csv', "w") as outfile:
     writer = csv.writer(outfile)
     writer.writerows(zip(tweets['Sentiment'], tweets['SentimentText']))
 
 #adds Sentiment and text header labels
-for line in fileinput.input(files=['pre_tweets.csv'], inplace=True):
+for line in fileinput.input(files=['tweet_csv/pre_tweets.csv'], inplace=True):
     if fileinput.isfirstline():
         print ('Sentiment, Text')
     print (line),
@@ -102,17 +103,73 @@ model = LinearSVC()
 model.fit(X_train_tfidf, y_train)
 
 #testing model and accuracy
+print("\n")
 predictions = model.predict(x_test_tfidf)
 print(predictions)
 print(accuracy_score(y_test, predictions))
 
 #actual testing with data extracted through Twitter api and preprocesed
-test_data = pd.read_csv("test_pre.csv")
+test_data = pd.read_csv("tweet_csv/test_pre.csv")
 
 ## for transforming the test data ##
 test_counts = count_vect.transform(test_data['sentimenttext'])
 test_tfidf = transformer.transform(test_counts)
 
 ## predicting the results ##
+print("\n")
 predictions1 = model.predict(test_tfidf)
 print(predictions1)
+print("\n")
+
+#adding predicted sentiments within the header
+df = pd.read_csv("tweet_csv/test_pre.csv")
+df ['pred'] = predictions1
+df.to_csv('tweet_csv/test_pre.csv')
+
+#percentage analysis of extracted tweets
+pos = 0
+neg = 0
+
+for i in predictions1:
+  if i == 1:
+    pos= pos+1
+  elif i == 0:
+    neg = neg+1
+
+pos_count = pos*100/(pos+neg)
+neg_count = neg*100/(pos+neg)
+
+print("Percentage positive tweets: ", pos_count)
+print("Percentage negative tweets: ", neg_count)
+print("\n")
+
+#count of positive/negative tweets from test data
+with open('tweet_csv/test_pre.csv', 'r') as count_res:
+  counter = Counter()
+  for row in csv.DictReader(count_res):
+    counter[row['pred']] += 1
+
+  positive = counter['1']
+  negative = counter['0']
+
+print("No. of positive tweets: ", positive)
+print("No. of negative tweets: ", negative)
+print("\n")
+
+colors = ['slateblue', 'darkblue']
+sizes = [positive, negative]
+labels = 'Positive: 32.03%', 'Negative: 67.97%'
+
+## use matplotlib to plot the chart
+plt.pie(
+   x=sizes,
+   shadow=True,
+   colors=colors,
+   labels=labels,
+   startangle=90
+)
+
+plt.title("Sentiment of {} Tweets about {}".format(200, '#MeToo'))
+plt.show()
+
+
